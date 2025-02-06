@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build
+/dist
+/build
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+
+# Testing
+/coverage
+
+# Production
+/build
+
+# Misc
+*.pem
+*.cert
+*.key
+
+# Keep production configuration in version control
+!config/production.yml
+

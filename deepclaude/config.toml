@@ -1,0 +1,27 @@
+[server]
+host = "0.0.0.0"
+port = 3000
+
+[pricing]
+# Configure pricing settings for usage tracking
+deepseek_input_price = 0.000002
+deepseek_output_price = 0.000002
+anthropic_input_price = 0.000003
+anthropic_output_price = 0.000015
+
+[security]
+# Configure security settings
+enable_https = true
+cert_file = "/certs/cert.pem"
+key_file = "/certs/key.pem"
+
+[logging]
+# Configure logging settings
+log_level = "info"
+log_file = "/var/log/deepclaude.log"
+
+[scaling]
+# Configure scaling settings
+max_concurrent_requests = 100
+timeout_seconds = 30
+

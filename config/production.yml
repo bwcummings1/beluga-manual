@@ -1,0 +1,79 @@
+# Beluga Production Configuration
+
+# Application Settings
+app:
+  name: Beluga
+  version: 1.0.0
+  environment: production
+
+# Server Settings
+server:
+  host: 0.0.0.0
+  port: 4000
+  cors:
+    origin: https://beluga.ai
+    methods: GET,HEAD,PUT,PATCH,POST,DELETE
+
+# Database Settings
+database:
+  type: postgresql
+  host: ${DB_HOST}
+  port: ${DB_PORT}
+  username: ${DB_USERNAME}
+  password: ${DB_PASSWORD}
+  database: beluga_production
+  ssl: true
+
+# Redis Settings
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  password: ${REDIS_PASSWORD}
+
+# JWT Settings
+jwt:
+  secret: ${JWT_SECRET}
+  expiresIn: 1d
+
+# Logging
+logging:
+  level: info
+  format: json
+
+# API Rate Limiting
+rateLimit:
+  windowMs: 15 * 60 * 1000 # 15 minutes
+  max: 100 # limit each IP to 100 requests per windowMs
+
+# DeepClaude AI Service
+deepclaude:
+  url: ${DEEPCLAUDE_URL}
+  apiKey: ${DEEPCLAUDE_API_KEY}
+
+# Email Service
+email:
+  service: sendgrid
+  apiKey: ${SENDGRID_API_KEY}
+  fromAddress: noreply@beluga.ai
+
+# File Storage
+storage:
+  type: s3
+  bucket: beluga-production
+  region: us-west-2
+  accessKeyId: ${AWS_ACCESS_KEY_ID}
+  secretAccessKey: ${AWS_SECRET_ACCESS_KEY}
+
+# Monitoring
+monitoring:
+  sentry:
+    dsn: ${SENTRY_DSN}
+  prometheus:
+    port: 9090
+
+# Feature Flags
+features:
+  enableBetaFeatures: false
+  maxConcurrentQueries: 10
+  enableCaching: true
+

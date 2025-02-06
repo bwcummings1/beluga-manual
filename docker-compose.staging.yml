@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.staging
+    depends_on:
+      - api
+    networks:
+      - beluga-network
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.api
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env.staging
+    depends_on:
+      - db
+      - redis
+      - deepclaude
+    networks:
+      - beluga-network
+
+  deepclaude:
+    build:
+      context: ./deepclaude
+      dockerfile: Dockerfile.deepclaude
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.staging
+    networks:
+      - beluga-network
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres-data-staging:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: beluga_staging
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - beluga-network
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis-data-staging:/data
+    networks:
+      - beluga-network
+
+networks:
+  beluga-network:
+    driver: bridge
+
+volumes:
+  postgres-data-staging:
+  redis-data-staging:
+

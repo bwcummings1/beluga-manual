@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beluga UAT Feedback Survey</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="email"], textarea { width: 100%; padding: 8px; }
+        .rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
+        .rating > input { display: none; }
+        .rating > label { color: #ddd; font-size: 2em; }
+        .rating > input:checked ~ label { color: #ffc700; }
+        button { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Beluga UAT Feedback Survey</h1>
+        <form id="uatSurvey">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Overall Experience:</label>
+                <div class="rating">
+                    <input type="radio" id="star5" name="overall_rating" value="5" required><label for="star5">☆</label>
+                    <input type="radio" id="star4" name="overall_rating" value="4"><label for="star4">☆</label>
+                    <input type="radio" id="star3" name="overall_rating" value="3"><label for="star3">☆</label>
+                    <input type="radio" id="star2" name="overall_rating" value="2"><label for="star2">☆</label>
+                    <input type="radio" id="star1" name="overall_rating" value="1"><label for="star1">☆</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ease_of_use">Ease of Use (1-5):</label>
+                <input type="number" id="ease_of_use" name="ease_of_use" min="1" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="response_quality">Response Quality (1-5):</label>
+                <input type="number" id="response_quality" name="response_quality" min="1" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="response_time">Response Time (1-5):</label>
+                <input type="number" id="response_time" name="response_time" min="1" max="5" required>
+            </div>
+            <div class="form-group">
+                <label for="favorite_feature">Favorite Feature:</label>
+                <input type="text" id="favorite_feature" name="favorite_feature">
+            </div>
+            <div class="form-group">
+                <label for="improvement_suggestions">Suggestions for Improvement:</label>
+                <textarea id="improvement_suggestions" name="improvement_suggestions" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="bugs_encountered">Any Bugs Encountered:</label>
+                <textarea id="bugs_encountered" name="bugs_encountered" rows="4"></textarea>
+            </div>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('uatSurvey').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real implementation, this would send the data to a server
+            console.log('Survey submitted:', new FormData(this));
+            alert('Thank you for your feedback!');
+        });
+    </script>
+</body>
+</html>
+

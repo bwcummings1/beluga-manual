@@ -1,0 +1,39 @@
+# Stage 1: Building the Rust application
+FROM rust:1.67 as builder
+
+WORKDIR /usr/src/deepclaude
+
+# Copy the Cargo.toml and Cargo.lock files
+COPY Cargo.toml Cargo.lock ./
+
+# Create a dummy main.rs to build dependencies
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+
+# Build dependencies
+RUN cargo build --release
+
+# Remove the dummy main.rs
+RUN rm src/main.rs
+
+# Copy the actual source code
+COPY src ./src
+
+# Build the application
+RUN cargo build --release
+
+# Stage 2: Create the runtime image
+FROM debian:bullseye-slim
+
+# Install necessary runtime libraries
+RUN apt-get update && apt-get install -y libssl1.1 ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Copy the binary from the builder stage
+COPY --from=builder /usr/src/deepclaude/target/release/deepclaude /usr/local/bin/deepclaude
+
+# Create a non-root user
+RUN useradd -ms /bin/bash deepclaude
+USER deepclaude
+
+# Set the entrypoint
+ENTRYPOINT ["deepclaude"]
+

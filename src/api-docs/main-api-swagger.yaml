@@ -1,0 +1,245 @@
+openapi: 3.0.0
+info:
+  title: Beluga Main Application API
+  version: 1.0.0
+  description: API documentation for the Beluga main application
+
+servers:
+  - url: https://api.beluga.ai/v1
+
+paths:
+  /chat:
+    post:
+      summary: Send a message to the chat
+      operationId: sendChatMessage
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /research:
+    post:
+      summary: Initiate a deep research query
+      operationId: initiateResearch
+      tags:
+        - Research
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResearchRequest'
+      responses:
+        '202':
+          description: Research query accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchAccepted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /research/{researchId}:
+    get:
+      summary: Get research results
+      operationId: getResearchResults
+      tags:
+        - Research
+      parameters:
+        - name: researchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResearchResult'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+        - sessionId
+      properties:
+        message:
+          type: string
+          description: The user's message
+        sessionId:
+          type: string
+          description: The session ID for the conversation
+        context:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: Previous messages in the conversation for context
+
+    ChatResponse:
+      type: object
+      required:
+        - response
+      properties:
+        response:
+          type: string
+          description: The AI's response to the user's message
+
+    ResearchRequest:
+      type: object
+      required:
+        - query
+        - depth
+      properties:
+        query:
+          type: string
+          description: The research query
+        depth:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: The depth of the research (1-5)
+        sessionId:
+          type: string
+          description: The session ID for the research
+
+    ResearchAccepted:
+      type: object
+      required:
+        - researchId
+        - estimatedTime
+      properties:
+        researchId:
+          type: string
+          description: The ID of the initiated research query
+        estimatedTime:
+          type: integer
+          description: Estimated time for research completion in seconds
+
+    ResearchResult:
+      type: object
+      required:
+        - researchId
+        - status
+        - results
+      properties:
+        researchId:
+          type: string
+          description: The ID of the research query
+        status:
+          type: string
+          enum: [in_progress, completed, failed]
+          description: The status of the research query
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResearchItem'
+          description: The research results (if completed)
+        error:
+          type: string
+          description: Error message (if failed)
+
+    ResearchItem:
+      type: object
+      required:
+        - source
+        - summary
+      properties:
+        source:
+          type: string
+          description: The source of the research item
+        summary:
+          type: string
+          description: A summary of the research findings
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score of the research item (0-1)
+
+    Message:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum: [user, ai]
+          description: The role of the message sender
+        content:
+          type: string
+          description: The content of the message
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: The error code
+        message:
+          type: string
+          description: The error message
+

@@ -1,0 +1,32 @@
+global:
+  resolve_timeout: 5m
+  slack_api_url: 'https://hooks.slack.com/services/YOUR_SLACK_WEBHOOK_URL'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'slack-notifications'
+
+receivers:
+- name: 'slack-notifications'
+  slack_configs:
+  - channel: '#alerts'
+    send_resolved: true
+- name: 'email-notifications'
+  email_configs:
+  - to: 'admin@beluga.com'
+    from: 'alertmanager@beluga.com'
+    smarthost: 'smtp.example.com:587'
+    auth_username: 'alertmanager@beluga.com'
+    auth_identity: 'alertmanager@beluga.com'
+    auth_password: 'YOUR_EMAIL_PASSWORD'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+

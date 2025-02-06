@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beluga API Documentation</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Montserrat, sans-serif;
+        }
+        #docs {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        nav {
+            background-color: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        nav button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        nav button.active {
+            background-color: #4a90e2;
+            color: white;
+        }
+        #redoc-container {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="docs">
+        <nav>
+            <button id="main-api-btn" class="active">Main Application API</button>
+            <button id="deepclaude-api-btn">DeepClaude API</button>
+        </nav>
+        <div id="redoc-container"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+    <script>
+        const mainApiBtn = document.getElementById('main-api-btn');
+        const deepclaudeApiBtn = document.getElementById('deepclaude-api-btn');
+        const container = document.getElementById('redoc-container');
+
+        function loadMainApi() {
+            mainApiBtn.classList.add('active');
+            deepclaudeApiBtn.classList.remove('active');
+            Redoc.init('/api-docs/main-api-swagger.yaml', {}, container);
+        }
+
+        function loadDeepclaudeApi() {
+            deepclaudeApiBtn.classList.add('active');
+            mainApiBtn.classList.remove('active');
+            Redoc.init('/api-docs/deepclaude-api-swagger.yaml', {}, container);
+        }
+
+        mainApiBtn.addEventListener('click', loadMainApi);
+        deepclaudeApiBtn.addEventListener('click', loadDeepclaudeApi);
+
+        // Initial load
+        loadMainApi();
+    </script>
+</body>
+</html>
+

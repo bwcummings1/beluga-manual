@@ -1,0 +1,48 @@
+groups:
+- name: beluga_alerts
+  rules:
+  - alert: HighCPUUsage
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High CPU usage detected
+      description: CPU usage is above 80% for 5 minutes on {{ $labels.instance }}
+
+  - alert: HighMemoryUsage
+    expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: High memory usage detected
+      description: Memory usage is above 80% for 5 minutes on {{ $labels.instance }}
+
+  - alert: APIHighResponseTime
+    expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="api"}[5m])) by (le)) > 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: API high response time
+      description: 95th percentile of API response time is above 1 second for 5 minutes
+
+  - alert: HighErrorRate
+    expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) * 100 > 5
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: High error rate detected
+      description: Error rate is above 5% for 5 minutes
+
+  - alert: DeepClaudeHighResponseTime
+    expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="deepclaude"}[5m])) by (le)) > 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: DeepClaude high response time
+      description: 95th percentile of DeepClaude response time is above 2 seconds for 5 minutes
+

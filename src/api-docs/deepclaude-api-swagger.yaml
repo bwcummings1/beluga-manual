@@ -1,0 +1,114 @@
+openapi: 3.0.0
+info:
+  title: DeepClaude Rust Service API
+  version: 1.0.0
+  description: API documentation for the DeepClaude Rust service
+
+servers:
+  - url: https://deepclaude.beluga.ai/v1
+
+paths:
+  /process:
+    post:
+      summary: Process a research query
+      operationId: processResearchQuery
+      tags:
+        - Research
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    ProcessRequest:
+      type: object
+      required:
+        - query
+        - depth
+      properties:
+        query:
+          type: string
+          description: The research query to process
+        depth:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: The depth of the research (1-5)
+        context:
+          type: array
+          items:
+            type: string
+          description: Additional context for the research query
+
+    ProcessResponse:
+      type: object
+      required:
+        - results
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResearchResult'
+          description: The processed research results
+
+    ResearchResult:
+      type: object
+      required:
+        - source
+        - summary
+        - confidence
+      properties:
+        source:
+          type: string
+          description: The source of the research result
+        summary:
+          type: string
+          description: A summary of the research findings
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Confidence score of the research result (0-1)
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: The error code
+        message:
+          type: string
+          description: The error message
+
